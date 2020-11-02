@@ -23,7 +23,7 @@ namespace RDS_Abmelder
 
             if (String.IsNullOrWhiteSpace(connectionBroker))
             {
-                MessageBox.Show("Ihr RDS Connection Broker Server konnte nicht automatisch gefunden werden.\nBitte legen Sie ihn manuell über das Einstellungsfenster fest.", "Fehler aufgertreten");
+                MessageBox.Show("Es ist noch kein RDS Connection Broker Server hinterlegt.\nBitte legen Sie Ihn manuell über das Einstellungsfenster fest.", "Fehler aufgertreten");
                 return queryInstances;
             }
 
@@ -46,13 +46,20 @@ namespace RDS_Abmelder
         {
             // TODO: Error handling
             string ConnectionBroker = null;
-            Microsoft.Win32.RegistryKey HKCU = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Default);
-            var FeedsList = HKCU.OpenSubKey(@"Software\Microsoft\workspaces\Feeds");
-            string[] Feeds = FeedsList.GetSubKeyNames();
-            if (Feeds.Count() == 1)
+            try
             {
-                var RDSKey = FeedsList.OpenSubKey(Feeds[0]);
-                ConnectionBroker = RDSKey.GetValue("WorkspaceId").ToString();
+                Microsoft.Win32.RegistryKey HKCU = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Default);
+                var FeedsList = HKCU.OpenSubKey(@"Software\Microsoft\workspaces\Feeds");
+                string[] Feeds = FeedsList.GetSubKeyNames();
+                if (Feeds.Count() == 1)
+                {
+                    var RDSKey = FeedsList.OpenSubKey(Feeds[0]);
+                    ConnectionBroker = RDSKey.GetValue("WorkspaceId").ToString();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Ein RDS Connection Broker Server konnte nicht automatisch ermittelt werden.\nBitte legen Sie ihn manuell über das Einstellungsfenster fest.", "Hinweis");
             }
 
             return ConnectionBroker;
