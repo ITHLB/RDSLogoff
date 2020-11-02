@@ -8,3 +8,11 @@
 
 
 ![Screenshot](Screenshot.png?raw=true "Screenshot")
+
+
+---
+
+This was originally developed as an internal tool, which is why the git history starts with Version 1.0.3 already.  
+The private history had some hardcoded values specific to our environment that I did not want to share publicly.
+
+This is also the reason why the interface is in german, sorry.
