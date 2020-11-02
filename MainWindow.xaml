@@ -1,0 +1,166 @@
+﻿<Window x:Class="RDS_Abmelder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RDS_Abmelder"
+        mc:Ignorable="d"
+        Title="RDS Abmelder v1.0.2" Height="450" Width="800" MinHeight="180" MinWidth="250"
+        FocusManager.FocusedElement="{Binding ElementName=benutzername}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+        <local:ToLowerValueConverter x:Key="StringToLowerCaseConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- This is a reserved row for a menubar we might add one day -->
+            <RowDefinition Height="Auto"/>
+            <!-- Main window content goes in here -->
+            <RowDefinition Height="*"/>
+            <!-- This is a reserved row for a statusbar we might add one day -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1" Margin="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="0,5,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="Suche nach Sitzungen von:" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Domäne" VerticalAlignment="Center"
+                   Foreground="LightGray" Visibility="{Binding ElementName=benutzerdomain, Path=Text.IsEmpty, Converter={StaticResource VisibleIfTrueConverter}}" IsHitTestVisible="False" Padding="5,0,0,0"/>
+                <TextBox Grid.Column="1" x:Name="benutzerdomain" Width="100" Text="{Binding searchUserDomain, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="username_keyDown" VerticalContentAlignment="Center" Padding="5" Margin="0,0,5,0" Background="Transparent"/>
+                <TextBlock Grid.Column="2" Text="Benutzer" VerticalAlignment="Center"
+                   Foreground="LightGray" Visibility="{Binding ElementName=benutzername, Path=Text.IsEmpty, Converter={StaticResource VisibleIfTrueConverter}}" IsHitTestVisible="False" Padding="5,0,0,0"/>
+                <TextBox Grid.Column="2" x:Name="benutzername" Width="250" Text="{Binding searchUserName, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" KeyDown="username_keyDown" VerticalContentAlignment="Center" Padding="5" Background="Transparent"/>
+                <Button Grid.Column="3" Name="btn_findSessions" Click="btn_findSessions_Click" Content="Suchen" Padding="20,0,20,0" Margin="5,0,5,0"/>
+                <Button Grid.Column="4" Name="btn_Settings" Click="btn_OpenSettingsWindow" Content="&#xE713;" FontFamily="Segoe MDL2 Assets" Padding="5" Background="Transparent" BorderBrush="Transparent" FontSize="16" ToolTip="Open Settings"/>
+            </Grid>
+
+            <DataGrid x:Name="datagrid_sessions"
+                Grid.Row="1"
+                AutoGenerateColumns="False"
+                RowHeight="50"                 
+                ItemsSource="{Binding Sessions, Mode=OneWay}"
+                IsReadOnly="True"
+                HeadersVisibility="All"
+                CanUserResizeColumns="True"
+                VerticalGridLinesBrush="LightGray"
+                HorizontalGridLinesBrush="LightGray"
+                HorizontalScrollBarVisibility="Disabled"
+                VirtualizingPanel.ScrollUnit="Pixel"
+                SelectionMode="Single"
+                RowDetailsVisibilityMode="Collapsed">
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="AliceBlue"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                </DataGrid.Resources>
+                <DataGrid.RowHeaderTemplate>
+                    <DataTemplate>
+                        <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" ExpandDirection="Down" />
+                    </DataTemplate>
+                </DataGrid.RowHeaderTemplate>
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Gray" BorderThickness="0 0 0 0">
+                            <Grid>
+                                <!-- <Rectangle Fill="AliceBlue"/> -->
+                                <DataGrid Background="AliceBlue"
+                                    VerticalGridLinesBrush="LightGray"
+                                    HorizontalGridLinesBrush="LightGray"
+                                    HeadersVisibility="None"
+                                    AutoGenerateColumns="False"
+                                    PreviewMouseWheel="DataGrid_ScrollParent"
+                                    RowHeight="25"
+                                    CanUserResizeColumns="True"
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    SelectionMode="Single"
+                                    ItemsSource="{Binding Processes}">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Header="Prozess" MinWidth="70" Width="1.5*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding CimInstanceProperties[Name].Value}" VerticalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Pfad" MinWidth="70" Width="3*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding CimInstanceProperties[ExecutablePath].Value}" VerticalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="" Width="0.7*" MinWidth="40">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="Beenden"
+                                                        Command="{Binding DataContext.CmdKillProcess, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                                        CommandParameter="{Binding}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Server" Width="3*" MinWidth="70">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ServerName, Converter={StaticResource StringToLowerCaseConverter}}" FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="SessionID" Width="3*" MinWidth="70">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding SessionID}" FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="" Width="1*" MinWidth="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Abmelden"
+                                        Command="{Binding DataContext.CmdLogoff, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock x:Name="tb_NoSessionsFound" Visibility="{Binding bNoSessions, Mode=OneWay, Converter={StaticResource VisibleIfTrueConverter}}" Text="Keine offenen Sitzungen." Grid.Row="1" IsHitTestVisible="False" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+        
+        <!-- Status Bar -->
+        <!--
+        <DockPanel Grid.Row="2">
+            <StatusBar>
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+
+                <StatusBarItem HorizontalAlignment="Right">
+                    <TextBlock>LOL</TextBlock>
+                </StatusBarItem>
+            </StatusBar>
+        </DockPanel>
+        -->
+    </Grid>
+</Window>

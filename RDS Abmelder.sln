@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RDS Abmelder", "RDS Abmelder.csproj", "{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Debug|x64.ActiveCfg = Debug|x64
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Debug|x64.Build.0 = Debug|x64
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Release|x64.ActiveCfg = Release|x64
+		{5FBE6B0D-6FF2-43CF-9DD9-940066E0CA1B}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F126038-51E7-4968-83D6-A97E2AD546BD}
+	EndGlobalSection
+EndGlobal

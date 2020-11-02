@@ -1,0 +1,5 @@
+*.exe
+.vs
+*.suo
+bin
+obj

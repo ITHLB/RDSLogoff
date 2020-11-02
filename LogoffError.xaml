@@ -1,0 +1,51 @@
+﻿<Window x:Class="RDS_Abmelder.LogoffError"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RDS_Abmelder"
+        mc:Ignorable="d"
+        Title="Fehler" Height="350" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" x:Name="ErrorTitle" Margin="0,0,0,10" Text="Die Remotesitzung konnte nicht geschlossen werden."/>
+            <TextBlock Grid.Row="1" Text="{Binding Path=ExitCode, StringFormat='logoff.exe Exit Code: {0}'}" />
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="logoff.exe Standard Error:"/>
+                <Border Grid.Row="1" BorderThickness="1" BorderBrush="DarkGray" Margin="3" SnapsToDevicePixels="True">
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="StdErr" Text="{Binding StdErr, Mode=OneWay}" Background="WhiteSmoke" Padding="2"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="logoff.exe Standard Output:"/>
+                <Border Grid.Row="1" BorderThickness="1" BorderBrush="DarkGray" Margin="3" SnapsToDevicePixels="True">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="StdOut" Text="{Binding StdOut, Mode=OneWay}" Background="WhiteSmoke" Padding="2"/>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Grid>
+        
+        <Button Grid.Row="1" x:Name="btn_OK" Click="btn_OK_Click" Margin="10" Width="100" Height="25" IsCancel="True">OK</Button>
+    </Grid>
+</Window>
