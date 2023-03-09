@@ -27,6 +27,9 @@ namespace RDS_Abmelder
                 return queryInstances;
             }
 
+            // The user may have pasted in some whitespace unknowingly, be helpful and trim it
+            username = username.Trim();
+
             try
             {
                 CimSession cimSession = CimSession.Create(connectionBroker);
@@ -44,20 +47,22 @@ namespace RDS_Abmelder
 
         public static string TryGetConnectionBroker()
         {
-            // TODO: Error handling
+            string[] Feeds = Array.Empty<string>();
             string ConnectionBroker = null;
-            try
+
+            Microsoft.Win32.RegistryKey HKCU = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Default);
+            var FeedsList = HKCU.OpenSubKey(@"Software\Microsoft\workspaces\Feeds");
+            if (FeedsList != null)
             {
-                Microsoft.Win32.RegistryKey HKCU = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Default);
-                var FeedsList = HKCU.OpenSubKey(@"Software\Microsoft\workspaces\Feeds");
-                string[] Feeds = FeedsList.GetSubKeyNames();
-                if (Feeds.Count() == 1)
-                {
-                    var RDSKey = FeedsList.OpenSubKey(Feeds[0]);
-                    ConnectionBroker = RDSKey.GetValue("WorkspaceId").ToString();
-                }
+                Feeds = FeedsList.GetSubKeyNames();
             }
-            catch
+            if (Feeds.Count() >= 1)
+            {
+                var RDSKey = FeedsList.OpenSubKey(Feeds[0]);
+                ConnectionBroker = RDSKey.GetValue("WorkspaceId")?.ToString();
+            }
+
+            if (ConnectionBroker is null)
             {
                 MessageBox.Show("Ein RDS Connection Broker Server konnte nicht automatisch ermittelt werden.\nBitte legen Sie ihn manuell über das Einstellungsfenster fest.", "Hinweis");
             }
